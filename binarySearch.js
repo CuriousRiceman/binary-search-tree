@@ -56,13 +56,44 @@ class Tree {
         }
         const midPoint = Math.round((start + end) / 2);
         const root = new Node(sorted[midPoint]);
+        this.temp
         // [1, 3, 4, 5, 7,   8,   9, 23, 67, 324, 6345]
         root.setLeft(this.buildTree(sorted, start, midPoint - 1));
         root.setRight(this.buildTree(sorted, midPoint + 1, end));
 
         return root;
     }
-    
+
+    insert(value) {
+        // Handle case where the tree is empty
+        if (this.root === null) {
+            this.root = new Node(value);
+            return;
+        }
+        let tempNode = this.root;
+        while (true) {
+            if (value === tempNode.data) {
+                // No duplicates allowed
+                return "No duplicates";
+            } else if (value < tempNode.data) {
+                // Go left
+                if (tempNode.getLeft() === null) {
+                    tempNode.setLeft(new Node(value));
+                    break;
+                } else {
+                    tempNode = tempNode.getLeft();
+                }
+            } else {
+                // Go right
+                if (tempNode.getRight() === null) {
+                    tempNode.setRight(new Node(value));
+                    break;
+                } else {
+                    tempNode = tempNode.getRight();
+                }
+            }
+        }
+    }
 }
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
@@ -87,6 +118,7 @@ arr = tree.mergeSort(arr);
 console.log(arr);
 tree.root = tree.buildTree(arr, 0, arrLength - 1);
 
+tree.insert(10);
 prettyPrint(tree.root); // [1, 3, 4, 5, 7, 8, 9, 23, 67, 324, 6345]
 
 // Notes:
