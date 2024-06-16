@@ -22,7 +22,6 @@ class Tree {
     constructor() {
         this.root = null;
     }
-
     sortArray(arrayFirstHalf, arraySecondHalf) {
         let sortedArray = [];
         while (arrayFirstHalf.length && arraySecondHalf.length) {
@@ -34,7 +33,6 @@ class Tree {
         }
         return sortedArray.concat(arrayFirstHalf).concat(arraySecondHalf);
     }
-
     mergeSort(unorderedArray) {
         let arrayLength = unorderedArray.length;
         if (arrayLength <= 1) {
@@ -49,7 +47,6 @@ class Tree {
 
         return this.sortArray(sortFirstHalf, sortSecondHalf);
     }
-
     buildTree(sorted, start, end) {
         if (start > end) {
             return null;
@@ -63,7 +60,6 @@ class Tree {
 
         return root;
     }
-
     insert(value) {
         // Handle case where the tree is empty
         if (this.root === null) {
@@ -94,6 +90,63 @@ class Tree {
             }
         }
     }
+    deleteItem(value) {
+        let priorNode = null;
+        let tempNode = this.root;
+        let direction = value > tempNode.data ? "right" : "left";
+    
+        while (tempNode !== null) {
+            if (value > tempNode.data) { // Go right
+                priorNode = tempNode;
+                tempNode = tempNode.getRight();
+                direction = "right";
+            } else if (value < tempNode.data) { // Go left
+                priorNode = tempNode;
+                tempNode = tempNode.getLeft();
+                direction = "left";
+            } else {  // Node to delete found
+                // Case 1: Node with no children (leaf node)
+                if (tempNode.getLeft() === null && tempNode.getRight() === null) {
+                        if (direction === "left") {
+                            priorNode.setLeft(null); 
+                        } else {
+                            priorNode.setRight(null);
+                
+                        }
+                } else if (tempNode.getLeft() === null) { // Case 2: Node with one child
+                        if (direction === "left") { // Only right child exists
+                            priorNode.setLeft(tempNode.getRight());
+                        } else {
+                            priorNode.setRight(tempNode.getRight()); 
+                        }
+                } else if (tempNode.getRight() === null) { // Only left child exists
+                        if (direction === "left")  {
+                            priorNode.setLeft(tempNode.getLeft());
+                        } else { 
+                            priorNode.setRight(tempNode.getLeft());
+                        }
+                } else { // Case 3: Node with two children
+                    // Find the inorder successor (smallest in the right subtree)
+                    let successor = this.getLeftBottom(tempNode.getRight());
+                    let successorValue = successor.data;
+                    // Recursively delete the inorder successor (no children so won't change anything)
+                    this.deleteItem(successorValue);
+                    // Replace tempNode's data with successor's data
+                    tempNode.data = successorValue;
+                }
+                break; // Exit loop after deleting the node
+            }
+        }
+    }
+    // Helper method to find the leftmost node in a subtree
+    getLeftBottom(node) {
+        let minNode = node;
+        while (minNode !== null && minNode.getLeft() !== null) {
+            minNode = minNode.getLeft();
+        }
+        return minNode;
+    }
+    
 }
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
@@ -115,10 +168,11 @@ let arr = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 arr = [...new Set(arr)];
 let arrLength = arr.length; // 11
 arr = tree.mergeSort(arr);
-console.log(arr);
+// console.log(arr);
 tree.root = tree.buildTree(arr, 0, arrLength - 1);
 
-tree.insert(10);
+// tree.insert(10);
+// tree.deleteItem(5);
 prettyPrint(tree.root); // [1, 3, 4, 5, 7, 8, 9, 23, 67, 324, 6345]
 
 // Notes:
