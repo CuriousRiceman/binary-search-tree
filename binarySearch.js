@@ -146,7 +146,64 @@ class Tree {
         }
         return minNode;
     }
-    
+    find(value) {
+        let tempNode = this.root;
+        while (true) {
+            if (value > tempNode.data) {
+                tempNode = tempNode.getRight();
+            } else if (value < tempNode.data) {
+                tempNode = tempNode.getLeft();
+            } else {
+                break;
+            }
+        }
+        return tempNode;
+    }
+    levelOrder(callback) {
+        if (!this.root) {
+            return;
+        }
+        let queue = [this.root];
+        let levelOrderArray = [];
+        while (queue.length !== 0) {
+            let tempNode = queue.shift(); // Dequeue
+            if (tempNode.getLeft()) {
+                queue.push(tempNode.getLeft());
+            }
+            if (tempNode.getRight()) {
+                queue.push(tempNode.getRight());
+            }
+
+            if (callback) {
+                callback(tempNode.data);
+            } else {
+                levelOrderArray.push(tempNode.data);
+            }
+        }
+        if (!callback) {
+            return levelOrderArray;
+        }
+    }
+    inOrder(callback) {
+        // if (!this.root) {
+        //     return;
+        // }
+        // let inOrderArray = [this.root];
+        // while (true) {
+
+        // }
+
+
+        // if (!callback) {
+        //     return inOrderArray;
+        // }
+    }
+    preOrder(callback) {
+
+    }
+    postOrder(callback) {
+
+    }
 }
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
@@ -168,12 +225,15 @@ let arr = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 arr = [...new Set(arr)];
 let arrLength = arr.length; // 11
 arr = tree.mergeSort(arr);
-// console.log(arr);
 tree.root = tree.buildTree(arr, 0, arrLength - 1);
 
 // tree.insert(10);
 // tree.deleteItem(5);
+// console.log(tree.find(6345));
+// console.log(tree.levelOrder());
+
 prettyPrint(tree.root); // [1, 3, 4, 5, 7, 8, 9, 23, 67, 324, 6345]
+
 
 // Notes:
 // let array = [10, 20, 30, 40, 50];
