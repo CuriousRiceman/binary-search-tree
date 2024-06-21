@@ -185,18 +185,31 @@ class Tree {
         }
     }
     inOrder(callback) {
-        // if (!this.root) {
-        //     return;
-        // }
-        // let inOrderArray = [this.root];
-        // while (true) {
-
-        // }
-
-
-        // if (!callback) {
-        //     return inOrderArray;
-        // }
+        if (!this.root) {
+            return;
+        }
+        let tempNode = this.root;
+        let inOrderArray = [];
+        let queue = [this.root];
+        while (tempNode !== null && tempNode.getLeft()) { // Get left most nodes in left subtree
+            queue.push(tempNode.getLeft());
+            tempNode = tempNode.getLeft();
+        }
+        while (queue.length !== 0) { // Will look at each left most node, check if right node exist
+            tempNode = queue.pop(); 
+            inOrderArray.push(tempNode.data);
+            if (tempNode.getRight()) { // If right node exist, run through same process of checking for left most node
+                tempNode = tempNode.getRight();
+                queue.push(tempNode); // Push it into the queue
+                while (tempNode !== null && tempNode.getLeft()) { // Check for left most nodes
+                    queue.push(tempNode.getLeft());
+                    tempNode = tempNode.getLeft();
+                }
+            }
+        }
+        if (!callback) {
+            return inOrderArray;
+        }
     }
     preOrder(callback) {
 
@@ -233,7 +246,7 @@ tree.root = tree.buildTree(arr, 0, arrLength - 1);
 // console.log(tree.levelOrder());
 
 prettyPrint(tree.root); // [1, 3, 4, 5, 7, 8, 9, 23, 67, 324, 6345]
-
+console.log(tree.inOrder());
 
 // Notes:
 // let array = [10, 20, 30, 40, 50];
