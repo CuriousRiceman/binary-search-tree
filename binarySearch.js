@@ -197,6 +197,9 @@ class Tree {
         }
         while (queue.length !== 0) { // Will look at each left most node, check if right node exist
             tempNode = queue.pop(); 
+            if (callback) {
+                callback(tempNode.data);
+            }
             inOrderArray.push(tempNode.data);
             if (tempNode.getRight()) { // If right node exist, run through same process of checking for left most node
                 tempNode = tempNode.getRight();
@@ -207,9 +210,7 @@ class Tree {
                 }
             }
         }
-        if (!callback) {
-            return inOrderArray;
-        }
+        return inOrderArray;
     }
     preOrder(callback) {
 
