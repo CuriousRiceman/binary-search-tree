@@ -191,7 +191,7 @@ class Tree {
         let tempNode = this.root;
         let inOrderArray = [];
         let queue = [this.root];
-        while (tempNode !== null && tempNode.getLeft()) { // Get left most nodes in left subtree
+        while (tempNode.getLeft()) { // Get left most nodes in left subtree
             queue.push(tempNode.getLeft());
             tempNode = tempNode.getLeft();
         }
@@ -213,7 +213,26 @@ class Tree {
         return inOrderArray;
     }
     preOrder(callback) {
-
+        let tempNode = this.root;
+        let preOrderArray = [];
+        let queue = [];
+        while (tempNode !== undefined) { // Must check for "undefined" since I use pop as base statement
+            if (callback) { // If array has 1 element and gets popped, its undefined, not null
+                callback(tempNode.data);
+            }
+            preOrderArray.push(tempNode.data);
+            if (tempNode.getRight()) { // If right node exists, put in queue
+                queue.push(tempNode.getRight());
+            }
+            if (tempNode.getLeft()) { // Pass left node to the array
+                tempNode = tempNode.getLeft();
+            } else {
+                tempNode = queue.pop(); // If no child nodes, we will take from the queue and go to right subtree
+            }
+        }
+        if (!callback) {
+            return preOrderArray;
+        }
     }
     postOrder(callback) {
 
@@ -247,7 +266,8 @@ tree.root = tree.buildTree(arr, 0, arrLength - 1);
 // console.log(tree.levelOrder());
 
 prettyPrint(tree.root); // [1, 3, 4, 5, 7, 8, 9, 23, 67, 324, 6345]
-console.log(tree.inOrder());
+// console.log(tree.inOrder());
+console.log(tree.preOrder());
 
 // Notes:
 // let array = [10, 20, 30, 40, 50];
