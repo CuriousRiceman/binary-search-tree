@@ -235,7 +235,33 @@ class Tree {
         }
     }
     postOrder(callback) {
-
+        if (!this.root) return [];
+        let postOrderArray = [];
+        let stack = [this.root];
+        let tempNode = this.root;
+        let previousNode = null;
+        while (tempNode.getLeft()) { // Get all left nodes
+            stack.push(tempNode.getLeft());
+            tempNode = tempNode.getLeft();
+        }
+        while (stack.length !== 0) { 
+            tempNode = stack[stack.length - 1]; // Peak at the stack for now
+            if (tempNode.getRight() && tempNode.getRight() !== previousNode) { // The previous node comparison is intended for the right subtree of each subtree
+                tempNode = tempNode.getRight(); // If it has right and is equal to previously visited node, then we know its completed so ignore it
+                while (tempNode) { // Otherwise, we will traverse the left nodes and add to stack, similar process to above
+                    stack.push(tempNode);
+                    tempNode = tempNode.getLeft();
+                }
+                previousNode = null; // Set to null to reset
+            } else { // Otherwise, we will push it onto array, and set it as the previousNode for comparison
+                postOrderArray.push(tempNode.data);
+                previousNode = stack.pop();
+            }               
+            
+        }
+        if (!callback) {
+            return postOrderArray;
+        }
     }
 }
 
@@ -253,7 +279,7 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
   };
 
 const tree = new Tree();
-let arr = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
+let arr = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324, 3.5];
 // Remove duplicates
 arr = [...new Set(arr)];
 let arrLength = arr.length; // 11
@@ -267,7 +293,8 @@ tree.root = tree.buildTree(arr, 0, arrLength - 1);
 
 prettyPrint(tree.root); // [1, 3, 4, 5, 7, 8, 9, 23, 67, 324, 6345]
 // console.log(tree.inOrder());
-console.log(tree.preOrder());
+// console.log(tree.preOrder());
+console.log(tree.postOrder());
 
 // Notes:
 // let array = [10, 20, 30, 40, 50];
