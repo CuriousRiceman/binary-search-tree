@@ -263,6 +263,20 @@ class Tree {
             return postOrderArray;
         }
     }
+    height(node) {
+        let tempNode = this.root;
+        let howTall = 0;
+        while (node !== tempNode.data && tempNode !== null) {
+            if (node > tempNode.data) {
+                tempNode = tempNode.getRight();
+            } else {
+                tempNode = tempNode.getLeft();
+            }
+            howTall++;
+        }
+        return howTall;
+        
+    }
 }
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
@@ -294,7 +308,8 @@ tree.root = tree.buildTree(arr, 0, arrLength - 1);
 prettyPrint(tree.root); // [1, 3, 4, 5, 7, 8, 9, 23, 67, 324, 6345]
 // console.log(tree.inOrder());
 // console.log(tree.preOrder());
-console.log(tree.postOrder());
+// console.log(tree.postOrder());
+console.log(tree.height(1));
 
 // Notes:
 // let array = [10, 20, 30, 40, 50];
