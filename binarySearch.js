@@ -237,25 +237,25 @@ class Tree {
     postOrder(callback) {
         if (!this.root) return [];
         let postOrderArray = [];
-        let stack = [this.root];
+        let queue = [this.root];
         let tempNode = this.root;
         let previousNode = null;
         while (tempNode.getLeft()) { // Get all left nodes
-            stack.push(tempNode.getLeft());
+            queue.push(tempNode.getLeft());
             tempNode = tempNode.getLeft();
         }
-        while (stack.length !== 0) { 
-            tempNode = stack[stack.length - 1]; // Peak at the stack for now
+        while (queue.length !== 0) { 
+            tempNode = queue[queue.length - 1]; // Peak at the queue for now
             if (tempNode.getRight() && tempNode.getRight() !== previousNode) { // The previous node comparison is intended for the right subtree of each subtree
                 tempNode = tempNode.getRight(); // If it has right and is equal to previously visited node, then we know its completed so ignore it
-                while (tempNode) { // Otherwise, we will traverse the left nodes and add to stack, similar process to above
-                    stack.push(tempNode);
+                while (tempNode) { // Otherwise, we will traverse the left nodes and add to queue, similar process to above
+                    queue.push(tempNode);
                     tempNode = tempNode.getLeft();
                 }
                 previousNode = null; // Set to null to reset
             } else { // Otherwise, we will push it onto array, and set it as the previousNode for comparison
                 postOrderArray.push(tempNode.data);
-                previousNode = stack.pop();
+                previousNode = queue.pop();
             }               
             
         }
@@ -277,25 +277,71 @@ class Tree {
         return howTall;
         
     }
-    height(node) {
+    height(nodeData) {
         let tempNode = this.root;
-        let howFarFromLeaf = 0;
-        while (node !== tempNode.data && tempNode !== null) {
-            if (node > tempNode.data) {
+        while (tempNode !== null && tempNode.data !== nodeData) {
+            if (nodeData > tempNode.data) {
                 tempNode = tempNode.getRight();
-            } else {
+            } else if (nodeData < tempNode.data) {
                 tempNode = tempNode.getLeft();
             }
         }
-        while (tempNode.getRight() || tempNode.getLeft()) {
-            if (tempNode.getRight()) {
-                tempNode = tempNode.getRight();
-            } else {
-                tempNode = tempNode.getLeft();
+        let queue = [tempNode];
+        let height = -1;
+        while (queue.length !== 0) {
+            let levelSize = queue.length;
+            height++;
+            for (let i = 0; i < levelSize; i++) {
+                let current = queue.shift();
+                if (current.getLeft()) {
+                    queue.push(current.getLeft());
+                }
+                if (current.getRight()) {
+                    queue.push(current.getRight());
+                }
             }
-            howFarFromLeaf++;
         }
-        return howFarFromLeaf;
+        return height;
+    }
+    
+    
+    isBalanced() {
+        let tempNode = null;
+        let queue = [this.root];
+        let balanced = true;
+        let leftHeight;
+        let rightHeight;
+        while (queue.length !== 0 && balanced) {
+            tempNode = queue.shift();
+            leftHeight = 1;
+            rightHeight = 1;
+            if (tempNode.getRight() || tempNode.getLeft()) {
+                if (tempNode.getRight()) {
+                    queue.push(tempNode.getRight());
+                    rightHeight += this.height(tempNode.getRight().data);
+                }
+                if (tempNode.getLeft()) {
+                    queue.push(tempNode.getLeft());
+                    leftHeight += this.height(tempNode.getLeft().data);
+                }
+            }
+            if (Math.abs(leftHeight - rightHeight) <= 1) {
+                continue;
+            } else {
+                balanced = false;
+            }
+        }
+        if (balanced) {
+            console.log("Balanced");
+        } else {
+            console.log("Not balanced");
+        }
+    }
+    rebalance() {
+        // use isBalanced function first and for checks
+        // research rotations - left, right, left-right, right-left rotations
+        // well simply done, I just need to use a traverse, and put that array in buildTree
+        // 
     }
 }
 
@@ -313,24 +359,26 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
   };
 
 const tree = new Tree();
-let arr = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324, 3.5];
+let arr = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
 // Remove duplicates
 arr = [...new Set(arr)];
 let arrLength = arr.length; // 11
 arr = tree.mergeSort(arr);
 tree.root = tree.buildTree(arr, 0, arrLength - 1);
 
-// tree.insert(10);
+tree.insert(10);
 // tree.deleteItem(5);
 // console.log(tree.find(6345));
 // console.log(tree.levelOrder());
-
+// tree.insert(0.5);
 prettyPrint(tree.root); // [1, 3, 4, 5, 7, 8, 9, 23, 67, 324, 6345]
 // console.log(tree.inOrder());
 // console.log(tree.preOrder());
 // console.log(tree.postOrder());
 // console.log(tree.depth(8));
-// console.log(tree.height(8)); 
+// console.log(tree.height(8));
+
+// tree.isBalanced();
 
 // Notes:
 // let array = [10, 20, 30, 40, 50];
