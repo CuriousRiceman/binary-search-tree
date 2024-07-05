@@ -304,30 +304,23 @@ class Tree {
         return height;
     }
     
-    
     isBalanced() {
-        let tempNode = null;
         let queue = [this.root];
         let balanced = true;
-        let leftHeight;
-        let rightHeight;
-        while (queue.length !== 0 && balanced) {
-            tempNode = queue.shift();
-            leftHeight = 1;
-            rightHeight = 1;
-            if (tempNode.getRight() || tempNode.getLeft()) {
-                if (tempNode.getRight()) {
-                    queue.push(tempNode.getRight());
-                    rightHeight += this.height(tempNode.getRight().data);
-                }
-                if (tempNode.getLeft()) {
-                    queue.push(tempNode.getLeft());
-                    leftHeight += this.height(tempNode.getLeft().data);
-                }
+        while (balanced && queue.length !== 0) {
+            let tempNode = queue.shift();
+            let leftHeight = 1
+            let rightHeight = 1
+            if (tempNode.getLeft()) {
+                queue.push(tempNode.getLeft());
+                this.height(tempNode.getLeft().data);
+                
             }
-            if (Math.abs(leftHeight - rightHeight) <= 1) {
-                continue;
-            } else {
+            if (tempNode.getRight()) {
+                queue.push(tempNode.getRight());
+                this.height(tempNode.getRight().data);
+            }
+            if (Math.abs(leftHeight - rightHeight) > 1) {
                 balanced = false;
             }
         }
@@ -366,7 +359,8 @@ let arrLength = arr.length; // 11
 arr = tree.mergeSort(arr);
 tree.root = tree.buildTree(arr, 0, arrLength - 1);
 
-tree.insert(10);
+// tree.insert(10);
+// tree.insert(11);
 // tree.deleteItem(5);
 // console.log(tree.find(6345));
 // console.log(tree.levelOrder());
@@ -377,8 +371,7 @@ prettyPrint(tree.root); // [1, 3, 4, 5, 7, 8, 9, 23, 67, 324, 6345]
 // console.log(tree.postOrder());
 // console.log(tree.depth(8));
 // console.log(tree.height(8));
-
-// tree.isBalanced();
+tree.isBalanced()
 
 // Notes:
 // let array = [10, 20, 30, 40, 50];
