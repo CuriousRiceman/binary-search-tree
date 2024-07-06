@@ -53,7 +53,6 @@ class Tree {
         }
         const midPoint = Math.round((start + end) / 2);
         const root = new Node(sorted[midPoint]);
-        this.temp
         // [1, 3, 4, 5, 7,   8,   9, 23, 67, 324, 6345]
         root.setLeft(this.buildTree(sorted, start, midPoint - 1));
         root.setRight(this.buildTree(sorted, midPoint + 1, end));
@@ -303,7 +302,6 @@ class Tree {
         }
         return height;
     }
-    
     isBalanced() {
         let queue = [this.root];
         let balanced = true;
@@ -313,12 +311,12 @@ class Tree {
             let rightHeight = 1
             if (tempNode.getLeft()) {
                 queue.push(tempNode.getLeft());
-                this.height(tempNode.getLeft().data);
+                leftHeight += this.height(tempNode.getLeft().data);
                 
             }
             if (tempNode.getRight()) {
                 queue.push(tempNode.getRight());
-                this.height(tempNode.getRight().data);
+                rightHeight += this.height(tempNode.getRight().data);
             }
             if (Math.abs(leftHeight - rightHeight) > 1) {
                 balanced = false;
@@ -331,10 +329,8 @@ class Tree {
         }
     }
     rebalance() {
-        // use isBalanced function first and for checks
-        // research rotations - left, right, left-right, right-left rotations
-        // well simply done, I just need to use a traverse, and put that array in buildTree
-        // 
+        let rebalanceArray = this.inOrder();
+        this.root = this.buildTree(rebalanceArray, 0, rebalanceArray.length - 1);
     }
 }
 
@@ -351,28 +347,41 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
     }
   };
 
+function generateRandomNumbers(count, max = 100) {
+    const arr = [];
+    for (let i = 0; i < count; i++) {
+        arr.push(Math.floor(Math.random() * max));
+    }
+    return arr;
+}
+
 const tree = new Tree();
-let arr = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
+let arr = [1, 3, 4, 5, 7, 8, 9, 23, 67, 324, 6345];
 // Remove duplicates
 arr = [...new Set(arr)];
 let arrLength = arr.length; // 11
 arr = tree.mergeSort(arr);
 tree.root = tree.buildTree(arr, 0, arrLength - 1);
 
-// tree.insert(10);
-// tree.insert(11);
+
 // tree.deleteItem(5);
 // console.log(tree.find(6345));
 // console.log(tree.levelOrder());
 // tree.insert(0.5);
-prettyPrint(tree.root); // [1, 3, 4, 5, 7, 8, 9, 23, 67, 324, 6345]
-// console.log(tree.inOrder());
-// console.log(tree.preOrder());
-// console.log(tree.postOrder());
+// prettyPrint(tree.root); // [1, 3, 4, 5, 7, 8, 9, 23, 67, 324, 6345]
+console.log(tree.inOrder());
+console.log(tree.preOrder());
+console.log(tree.postOrder());
 // console.log(tree.depth(8));
 // console.log(tree.height(8));
+prettyPrint(tree.root);
+tree.insert(10);
+tree.insert(11);
+prettyPrint(tree.root);
 tree.isBalanced()
-
+tree.rebalance();
+prettyPrint(tree.root);
+tree.isBalanced()
 // Notes:
 // let array = [10, 20, 30, 40, 50];
 // console.log(array.splice(1,3)); // (start inclusive - end inclusive) -> [20, 30, 40]
